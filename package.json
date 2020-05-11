@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "A static site generator that turns ejs and json files into HTML",
   "main": "build/index.js",
-  "dependencies": {},
+  "dependencies": {
+    "yargs": "^15.3.1"
+  },
   "devDependencies": {
     "@types/node": "^13.13.5",
+    "@types/yargs": "^15.0.4",
     "@typescript-eslint/eslint-plugin": "^2.31.0",
     "@typescript-eslint/parser": "^2.31.0",
     "eslint": "^7.0.0",
@@ -17,7 +20,8 @@
     "test": "jest src",
     "dev": "tsc-watch",
     "build": "rimraf ./build && tsc",
-    "lint": "eslint ./src --ext .ts"
+    "lint": "eslint ./src --ext .ts",
+    "start": "cd build && node ./index.js"
   },
   "keywords": [
     "ssg",
