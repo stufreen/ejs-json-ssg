@@ -26,8 +26,8 @@ export function readConfig(configPath: string): Config {
   }
 
   return {
-    templateDir,
-    outputDir,
-    site,
+    templateDir: relativeToAbsolute(templateDir),
+    outputDir: relativeToAbsolute(templateDir),
+    sitePath: relativeToAbsolute(site),
   };
 }

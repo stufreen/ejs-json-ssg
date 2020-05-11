@@ -27,9 +27,9 @@ function readConfig(configPath) {
         throw new Error('Invalid config file.');
     }
     return {
-        templateDir: templateDir,
-        outputDir: outputDir,
-        site: site,
+        templateDir: relativeToAbsolute(templateDir),
+        outputDir: relativeToAbsolute(templateDir),
+        sitePath: relativeToAbsolute(site),
     };
 }
 exports.readConfig = readConfig;
