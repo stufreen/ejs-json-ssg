@@ -11,8 +11,6 @@ export interface Config {
 }
 
 export interface Field {
-  title?: string;
-  id: string;
   type: string;
   value: Fields | string | number | boolean | null;
 }

@@ -9,14 +9,10 @@ export function isFieldObject(maybeFieldObject: any): boolean {
     return false;
   }
 
-  Object.keys(maybeFieldObject).forEach((key) => {
+  return Object.keys(maybeFieldObject).every((key) => {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    if (!isField(maybeFieldObject[key])) {
-      return false;
-    }
+    return isField(maybeFieldObject[key]);
   });
-
-  return true;
 }
 
 export function isMetaObject(maybeMetaObject: any): boolean {
@@ -24,34 +20,25 @@ export function isMetaObject(maybeMetaObject: any): boolean {
     return false;
   }
 
-  Object.keys(maybeMetaObject).forEach((key) => {
-    if (!isString(maybeMetaObject[key])) {
-      return false;
-    }
+  return Object.keys(maybeMetaObject).every((key) => {
+    return isString(maybeMetaObject[key]);
   });
-
-  return true;
 }
 
 export function isField(maybeField: any): maybeField is Field {
-  if (!maybeField.id) {
-    throw new Error('Invalid field: missing "id"');
-  }
-
-  if (!isString(maybeField.id)) {
-    throw new Error('Invalid field: "id" must be a string');
-  }
-
   if (!maybeField.type) {
-    throw new Error('Invalid field: missing "type"');
+    // throw new Error('Invalid field: missing "type"');
+    return false;
   }
 
   if (!isString(maybeField.type)) {
-    throw new Error('Invalid field: "type" must be a string');
+    // throw new Error('Invalid field: "type" must be a string');
+    return false;
   }
 
   if (typeof maybeField.value === 'undefined') {
-    throw new Error('Invalid field: "value" is not defined');
+    // throw new Error('Invalid field: "value" is not defined');
+    return false;
   }
 
   if (
@@ -61,9 +48,10 @@ export function isField(maybeField: any): maybeField is Field {
     !isString(maybeField.value) &&
     !isFieldObject(maybeField.value)
   ) {
-    throw new Error(
-      'Invalid field: "value" can be a boolean, number, string, null or array of fields'
-    );
+    // throw new Error(
+    //   'Invalid field: "value" can be a boolean, number, string, null or array of fields'
+    // );
+    return false;
   }
 
   return true;
@@ -71,19 +59,23 @@ export function isField(maybeField: any): maybeField is Field {
 
 export function isSiteNode(maybeNode: any): maybeNode is SiteNode {
   if (!maybeNode.slug) {
-    throw new Error('Invalid site node: missing "slug"');
+    // throw new Error('Invalid site node: missing "slug"');
+    return false;
   }
 
   if (!isString(maybeNode.slug)) {
-    throw new Error('Invalid site node: "slug" must be a string');
+    // throw new Error('Invalid site node: "slug" must be a string');
+    return false;
   }
 
   if (!maybeNode.template) {
-    throw new Error('Invalid site node: missing "template"');
+    // throw new Error('Invalid site node: missing "template"');
+    return false;
   }
 
   if (!isString(maybeNode.template)) {
-    throw new Error('Invalid site node: "template" must be a string');
+    // throw new Error('Invalid site node: "template" must be a string');
+    return false;
   }
 
   if (

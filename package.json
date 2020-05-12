@@ -23,7 +23,7 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
-    "test": "jest src",
+    "test": "jest src --watch",
     "dev": "tsc-watch",
     "build": "rimraf ./build && tsc",
     "lint": "eslint ./src --ext .ts",
