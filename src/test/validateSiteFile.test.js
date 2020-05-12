@@ -56,7 +56,7 @@ describe('isFieldObject', () => {
     ).toBe(false);
   });
 
-  it('returns true if you pass in an object with an empty object property', () => {
+  it('returns true if you pass in an object with an valid field property', () => {
     expect(
       isFieldObject({
         someField: mockField,
