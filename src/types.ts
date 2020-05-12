@@ -14,8 +14,12 @@ export interface Field {
   title?: string;
   id: string;
   type: string;
-  value: Field[] | string | number | boolean | null;
+  value: Fields | string | number | boolean | null;
 }
+
+export type Fields = {
+  [key: string]: Field;
+};
 
 export interface SiteNode {
   slug: string;
@@ -24,6 +28,8 @@ export interface SiteNode {
   meta?: {
     [key: string]: string;
   };
-  fields?: Field[];
+  fields?: {
+    [key: string]: Field;
+  };
   children?: SiteNode[];
 }
