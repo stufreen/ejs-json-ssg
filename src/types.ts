@@ -6,5 +6,6 @@ export interface Arguments {
 export interface Config {
   templateDir: string;
   outputDir: string;
-  sitePath: string;
+  contentDir: string;
+  defaultLanguage: string;
 }

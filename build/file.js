@@ -9,27 +9,42 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var path = __importStar(require("path"));
 var fs_1 = require("fs");
+var DEFAULT_CONFIG = {
+    templateDir: './templates',
+    outputDir: './build',
+    contentDir: './content',
+    defaultLanguage: 'en',
+};
 var relativeToAbsolute = function (filePath) {
     return path.resolve(process.cwd(), filePath);
 };
-function getConfigLocation(args) {
+var getConfigLocation = function (args) {
     var _a;
     if (args.config) {
         return relativeToAbsolute((_a = args.config) !== null && _a !== void 0 ? _a : args.c);
     }
-    throw new Error('No config file specified. Please include a config file with "--config ./path/to/config.json"');
-}
-exports.getConfigLocation = getConfigLocation;
-function readConfig(configPath) {
-    var contentsBuffer = fs_1.readFileSync(configPath);
-    var _a = JSON.parse(contentsBuffer.toString()), templateDir = _a.templateDir, outputDir = _a.outputDir, site = _a.site;
-    if (!templateDir || !outputDir || !site) {
-        throw new Error('Invalid config file.');
+    throw new Error('No config file specified.');
+};
+function readConfig(args) {
+    try {
+        var configPath = getConfigLocation(args);
+        var contentsBuffer = fs_1.readFileSync(configPath);
+        var _a = JSON.parse(contentsBuffer.toString()), templateDir = _a.templateDir, outputDir = _a.outputDir, contentDir = _a.contentDir, defaultLanguage = _a.defaultLanguage;
+        return {
+            templateDir: relativeToAbsolute(templateDir !== null && templateDir !== void 0 ? templateDir : DEFAULT_CONFIG.templateDir),
+            outputDir: relativeToAbsolute(outputDir !== null && outputDir !== void 0 ? outputDir : DEFAULT_CONFIG.outputDir),
+            contentDir: relativeToAbsolute(contentDir !== null && contentDir !== void 0 ? contentDir : DEFAULT_CONFIG.contentDir),
+            defaultLanguage: defaultLanguage !== null && defaultLanguage !== void 0 ? defaultLanguage : DEFAULT_CONFIG.defaultLanguage,
+        };
     }
-    return {
-        templateDir: relativeToAbsolute(templateDir),
-        outputDir: relativeToAbsolute(templateDir),
-        sitePath: relativeToAbsolute(site),
-    };
+    catch (error) {
+        process.stdout.write("Invalid config file: " + error.message + "\n\nUsing defaults: " + JSON.stringify(DEFAULT_CONFIG) + "\n");
+        return {
+            templateDir: relativeToAbsolute(DEFAULT_CONFIG.templateDir),
+            outputDir: relativeToAbsolute(DEFAULT_CONFIG.outputDir),
+            contentDir: relativeToAbsolute(DEFAULT_CONFIG.contentDir),
+            defaultLanguage: DEFAULT_CONFIG.defaultLanguage,
+        };
+    }
 }
 exports.readConfig = readConfig;
