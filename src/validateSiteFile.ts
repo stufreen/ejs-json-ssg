@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Field, SiteNode } from './types';
 
-const isString = (value: any): boolean =>
+export const isString = (value: any): boolean =>
   typeof value === 'string' || value instanceof String;
 
-function isFieldObject(maybeFieldObject: any): boolean {
+export function isFieldObject(maybeFieldObject: any): boolean {
   if (typeof maybeFieldObject !== 'object' || maybeFieldObject === null) {
     return false;
   }
@@ -19,7 +19,7 @@ function isFieldObject(maybeFieldObject: any): boolean {
   return true;
 }
 
-function isMetaObject(maybeMetaObject: any): boolean {
+export function isMetaObject(maybeMetaObject: any): boolean {
   if (typeof maybeMetaObject !== 'object' || maybeMetaObject === null) {
     return false;
   }
@@ -33,7 +33,7 @@ function isMetaObject(maybeMetaObject: any): boolean {
   return true;
 }
 
-function isField(maybeField: any): maybeField is Field {
+export function isField(maybeField: any): maybeField is Field {
   if (!maybeField.id) {
     throw new Error('Invalid field: missing "id"');
   }
@@ -69,7 +69,7 @@ function isField(maybeField: any): maybeField is Field {
   return true;
 }
 
-function isSiteNode(maybeNode: any): maybeNode is SiteNode {
+export function isSiteNode(maybeNode: any): maybeNode is SiteNode {
   if (!maybeNode.slug) {
     throw new Error('Invalid site node: missing "slug"');
   }
