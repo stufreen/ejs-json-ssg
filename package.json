@@ -4,6 +4,7 @@
   "description": "A static site generator that turns ejs and json files into HTML",
   "main": "build/index.js",
   "dependencies": {
+    "winston": "^3.2.1",
     "yargs": "^15.3.1"
   },
   "devDependencies": {

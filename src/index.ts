@@ -1,4 +1,6 @@
 import yargs from 'yargs';
+
+import { initializeLogger } from './logger';
 import { getConfig } from './config';
 // import parseSite from './parseSite';
 // import validateSiteFile from './validateSiteFile';
@@ -8,9 +10,12 @@ const argv = yargs.options({
 }).argv;
 
 // Cet configuration
-const config = getConfig(argv); 
+const config = getConfig(argv);
 
-console.log(config);
+// Initialize logger
+const logger = initializeLogger('debug');
+
+logger.warn(config);
 
 // TO DO: Check for write access to outputDir
 

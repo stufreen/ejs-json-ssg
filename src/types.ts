@@ -27,7 +27,8 @@ export interface SiteNode {
     [key: string]: string;
   };
   fields?: {
-    [key: string]: Field;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
   };
   children?: SiteNode[];
 }

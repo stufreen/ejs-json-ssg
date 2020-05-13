@@ -2,7 +2,7 @@ import { isString, isFieldObject } from '../validateSiteFile';
 
 const mockField = {
   type: 'text',
-  value: 'The Sun Also Rises',
+  value: 'bookTitle',
 };
 
 describe('isString', () => {

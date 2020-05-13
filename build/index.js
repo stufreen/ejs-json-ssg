@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var yargs_1 = __importDefault(require("yargs"));
+var logger_1 = require("./logger");
 var config_1 = require("./config");
 // import parseSite from './parseSite';
 // import validateSiteFile from './validateSiteFile';
@@ -12,7 +13,9 @@ var argv = yargs_1.default.options({
 }).argv;
 // Cet configuration
 var config = config_1.getConfig(argv);
-console.log(config);
+// Initialize logger
+var logger = logger_1.initializeLogger('debug');
+logger.warn(config);
 // TO DO: Check for write access to outputDir
 // TO DO: Read and parse the site.json file
 // const root = parseSite(contentDir);
