@@ -1,12 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs_1 = require("fs");
-var parseSite = function (sitePath) { return new Promise(function (resolve, reject) {
-    fs_1.readFile(sitePath, 'utf8', function (error, data) {
-        if (error) {
-            reject(error.message);
-        }
-        resolve(JSON.parse(data));
-    });
-}); };
+var path_1 = __importDefault(require("path"));
+function parseSite(contentDir) {
+    var siteFile = path_1.default.resolve(contentDir, 'site.json');
+    return fs_1.promises.readFile(siteFile, 'utf8').then(JSON.parse);
+}
 exports.default = parseSite;

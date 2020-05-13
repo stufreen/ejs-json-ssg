@@ -1,5 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var logger_1 = __importDefault(require("./logger"));
 exports.isString = function (value) {
     return typeof value === 'string' || value instanceof String;
 };
@@ -24,15 +28,15 @@ function isMetaObject(maybeMetaObject) {
 exports.isMetaObject = isMetaObject;
 function isField(maybeField) {
     if (!maybeField.type) {
-        // throw new Error('Invalid field: missing "type"');
+        logger_1.default.warn('Invalid field: missing "type"');
         return false;
     }
     if (!exports.isString(maybeField.type)) {
-        // throw new Error('Invalid field: "type" must be a string');
+        logger_1.default.warn('Invalid field: "type" must be a string');
         return false;
     }
     if (typeof maybeField.value === 'undefined') {
-        // throw new Error('Invalid field: "value" is not defined');
+        logger_1.default.warn('Invalid field: "value" is not defined');
         return false;
     }
     if (typeof maybeField.value !== 'boolean' &&
@@ -40,58 +44,50 @@ function isField(maybeField) {
         maybeField !== null &&
         !exports.isString(maybeField.value) &&
         !isFieldObject(maybeField.value)) {
-        // throw new Error(
-        //   'Invalid field: "value" can be a boolean, number, string, null or array of fields'
-        // );
+        logger_1.default.warn('Invalid field: "value" can be a boolean, number, string, null or array of fields');
         return false;
     }
     return true;
 }
 exports.isField = isField;
 function isSiteNode(maybeNode) {
-    if (!maybeNode.slug) {
-        // throw new Error('Invalid site node: missing "slug"');
-        return false;
-    }
     if (!exports.isString(maybeNode.slug)) {
-        // throw new Error('Invalid site node: "slug" must be a string');
+        logger_1.default.warn('Invalid site node: "slug" must be a string');
         return false;
     }
     if (!maybeNode.template) {
-        // throw new Error('Invalid site node: missing "template"');
+        logger_1.default.warn('Invalid site node: missing "template"');
         return false;
     }
     if (!exports.isString(maybeNode.template)) {
-        // throw new Error('Invalid site node: "template" must be a string');
+        logger_1.default.warn('Invalid site node: "template" must be a string');
         return false;
     }
     if (typeof maybeNode.meta !== 'undefined' &&
         typeof maybeNode.visible !== 'boolean') {
-        throw new Error('Invalid site node: "visible" may only be boolean or undefined');
+        logger_1.default.warn('Invalid site node: "visible" may only be boolean or undefined');
+        return false;
     }
     if (typeof maybeNode.meta !== 'undefined' && !isMetaObject(maybeNode.meta)) {
-        throw new Error('Invalid site node: "meta" may only be an object where the values are strings');
+        logger_1.default.warn('Invalid site node: "meta" may only be an object where the values are strings');
+        return false;
     }
     if (typeof maybeNode.fields !== 'undefined' &&
         !isMetaObject(maybeNode.fields)) {
-        throw new Error('Invalid site node: "fields" may only be an object where the values are Fields');
+        logger_1.default.warn('Invalid site node: "fields" may only be an object where the values are Fields');
+        return false;
     }
     if (typeof maybeNode.children !== 'undefined' &&
         !Array.isArray(maybeNode.children)) {
-        throw new Error('Invalid site node: "children" may only be an array of site nodes');
+        logger_1.default.warn('Invalid site node: "children" may only be an array of site nodes');
+        return false;
     }
     if (typeof maybeNode.children !== 'undefined' &&
-        Array.isArray(maybeNode.children)) {
-        maybeNode.children.forEach(function (maybeSiteNode) {
-            if (isSiteNode(maybeSiteNode)) {
-                throw new Error('Invalid site node: "children" may only be an array of site nodes');
-            }
-        });
+        Array.isArray(maybeNode.children) &&
+        !maybeNode.children.every(isSiteNode)) {
+        logger_1.default.warn('Invalid site node: "children" may only be an array of site nodes');
+        return false;
     }
     return true;
 }
 exports.isSiteNode = isSiteNode;
-var validateSiteFile = function (root, templateDir) {
-    return isSiteNode(root);
-};
-exports.default = validateSiteFile;

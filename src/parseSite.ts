@@ -1,13 +1,7 @@
-import {readFile} from 'fs';
+import { promises } from 'fs';
+import path from 'path';
 
-const parseSite = (sitePath: string): Promise<any> => new Promise((resolve, reject) => {
-  readFile(sitePath, 'utf8', (error, data) => {
-    if (error) {
-      reject(error.message);
-    }
-
-    resolve(JSON.parse(data));
-  });
-});
-
-export default parseSite;
+export default function parseSite(contentDir: string): Promise<any> {
+  const siteFile = path.resolve(contentDir, 'site.json');
+  return promises.readFile(siteFile, 'utf8').then(JSON.parse);
+}

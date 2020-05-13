@@ -30,22 +30,23 @@ function getConfigLocation(args) {
     throw new Error('No config file specified.');
 }
 function getDefaultConfig() {
-    return {
+    return Promise.resolve({
         templateDir: relativeToAbsolute(DEFAULT_CONFIG.templateDir),
         outputDir: relativeToAbsolute(DEFAULT_CONFIG.outputDir),
         contentDir: relativeToAbsolute(DEFAULT_CONFIG.contentDir),
         defaultLanguage: DEFAULT_CONFIG.defaultLanguage,
-    };
+    });
 }
 function readConfig(configPath) {
-    var contentsBuffer = fs_1.readFileSync(configPath);
-    var _a = JSON.parse(contentsBuffer.toString()), templateDir = _a.templateDir, outputDir = _a.outputDir, contentDir = _a.contentDir, defaultLanguage = _a.defaultLanguage;
-    return {
-        templateDir: relativeToAbsolute(templateDir !== null && templateDir !== void 0 ? templateDir : DEFAULT_CONFIG.templateDir),
-        outputDir: relativeToAbsolute(outputDir !== null && outputDir !== void 0 ? outputDir : DEFAULT_CONFIG.outputDir),
-        contentDir: relativeToAbsolute(contentDir !== null && contentDir !== void 0 ? contentDir : DEFAULT_CONFIG.contentDir),
-        defaultLanguage: defaultLanguage !== null && defaultLanguage !== void 0 ? defaultLanguage : DEFAULT_CONFIG.defaultLanguage,
-    };
+    return fs_1.promises.readFile(configPath, 'utf-8').then(function (contents) {
+        var _a = JSON.parse(contents), templateDir = _a.templateDir, outputDir = _a.outputDir, contentDir = _a.contentDir, defaultLanguage = _a.defaultLanguage;
+        return {
+            templateDir: relativeToAbsolute(templateDir !== null && templateDir !== void 0 ? templateDir : DEFAULT_CONFIG.templateDir),
+            outputDir: relativeToAbsolute(outputDir !== null && outputDir !== void 0 ? outputDir : DEFAULT_CONFIG.outputDir),
+            contentDir: relativeToAbsolute(contentDir !== null && contentDir !== void 0 ? contentDir : DEFAULT_CONFIG.contentDir),
+            defaultLanguage: defaultLanguage !== null && defaultLanguage !== void 0 ? defaultLanguage : DEFAULT_CONFIG.defaultLanguage,
+        };
+    });
 }
 function getConfig(args) {
     try {

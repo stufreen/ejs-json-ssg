@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Field, SiteNode } from './types';
+import logger from './logger';
 
 export const isString = (value: any): boolean =>
   typeof value === 'string' || value instanceof String;
@@ -27,17 +28,17 @@ export function isMetaObject(maybeMetaObject: any): boolean {
 
 export function isField(maybeField: any): maybeField is Field {
   if (!maybeField.type) {
-    // throw new Error('Invalid field: missing "type"');
+    logger.warn('Invalid field: missing "type"');
     return false;
   }
 
   if (!isString(maybeField.type)) {
-    // throw new Error('Invalid field: "type" must be a string');
+    logger.warn('Invalid field: "type" must be a string');
     return false;
   }
 
   if (typeof maybeField.value === 'undefined') {
-    // throw new Error('Invalid field: "value" is not defined');
+    logger.warn('Invalid field: "value" is not defined');
     return false;
   }
 
@@ -48,9 +49,9 @@ export function isField(maybeField: any): maybeField is Field {
     !isString(maybeField.value) &&
     !isFieldObject(maybeField.value)
   ) {
-    // throw new Error(
-    //   'Invalid field: "value" can be a boolean, number, string, null or array of fields'
-    // );
+    logger.warn(
+      'Invalid field: "value" can be a boolean, number, string, null or array of fields'
+    );
     return false;
   }
 
@@ -58,23 +59,18 @@ export function isField(maybeField: any): maybeField is Field {
 }
 
 export function isSiteNode(maybeNode: any): maybeNode is SiteNode {
-  if (!maybeNode.slug) {
-    // throw new Error('Invalid site node: missing "slug"');
-    return false;
-  }
-
   if (!isString(maybeNode.slug)) {
-    // throw new Error('Invalid site node: "slug" must be a string');
+    logger.warn('Invalid site node: "slug" must be a string');
     return false;
   }
 
   if (!maybeNode.template) {
-    // throw new Error('Invalid site node: missing "template"');
+    logger.warn('Invalid site node: missing "template"');
     return false;
   }
 
   if (!isString(maybeNode.template)) {
-    // throw new Error('Invalid site node: "template" must be a string');
+    logger.warn('Invalid site node: "template" must be a string');
     return false;
   }
 
@@ -82,53 +78,49 @@ export function isSiteNode(maybeNode: any): maybeNode is SiteNode {
     typeof maybeNode.meta !== 'undefined' &&
     typeof maybeNode.visible !== 'boolean'
   ) {
-    throw new Error(
+    logger.warn(
       'Invalid site node: "visible" may only be boolean or undefined'
     );
+    return false;
   }
 
   if (typeof maybeNode.meta !== 'undefined' && !isMetaObject(maybeNode.meta)) {
-    throw new Error(
+    logger.warn(
       'Invalid site node: "meta" may only be an object where the values are strings'
     );
+    return false;
   }
 
   if (
     typeof maybeNode.fields !== 'undefined' &&
     !isMetaObject(maybeNode.fields)
   ) {
-    throw new Error(
+    logger.warn(
       'Invalid site node: "fields" may only be an object where the values are Fields'
     );
+    return false;
   }
 
   if (
     typeof maybeNode.children !== 'undefined' &&
     !Array.isArray(maybeNode.children)
   ) {
-    throw new Error(
+    logger.warn(
       'Invalid site node: "children" may only be an array of site nodes'
     );
+    return false;
   }
 
   if (
     typeof maybeNode.children !== 'undefined' &&
-    Array.isArray(maybeNode.children)
+    Array.isArray(maybeNode.children) &&
+    !maybeNode.children.every(isSiteNode)
   ) {
-    maybeNode.children.forEach((maybeSiteNode: any) => {
-      if (isSiteNode(maybeSiteNode)) {
-        throw new Error(
-          'Invalid site node: "children" may only be an array of site nodes'
-        );
-      }
-    });
+    logger.warn(
+      'Invalid site node: "children" may only be an array of site nodes'
+    );
+    return false;
   }
 
   return true;
 }
-
-const validateSiteFile = (root: any, templateDir: string): root is SiteNode => {
-  return isSiteNode(root);
-};
-
-export default validateSiteFile;
