@@ -1,14 +1,13 @@
-import winston, { format, transports, Logger } from 'winston';
+import winston, { format, transports } from 'winston';
 
-let logger;
+const logger = winston.createLogger({
+  level: 'info',
+  format: format.combine(format.colorize(), format.simple()),
+  transports: [new transports.Console()],
+});
 
-export function initializeLogger(infoLevel: string): Logger {
-  logger = winston.createLogger({
-    level: infoLevel,
-    format: format.prettyPrint(),
-    transports: [new transports.Console()],
-  });
-  return logger;
+export function setLoggerLevel(infoLevel: string): void {
+  logger.level = infoLevel;
 }
 
 export default logger;

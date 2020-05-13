@@ -1,23 +1,29 @@
 import yargs from 'yargs';
 
-import { initializeLogger } from './logger';
+import logger, { setLoggerLevel } from './logger';
 import { getConfig } from './config';
+import { addDirectory } from './file';
 // import parseSite from './parseSite';
 // import validateSiteFile from './validateSiteFile';
 
 const argv = yargs.options({
   c: { type: 'string', alias: 'config' },
+  l: { type: 'string', alias: 'logs' },
 }).argv;
+
+setLoggerLevel(argv.l ?? 'info');
 
 // Cet configuration
 const config = getConfig(argv);
 
-// Initialize logger
-const logger = initializeLogger('debug');
-
-logger.warn(config);
-
-// TO DO: Check for write access to outputDir
+// Add build directory
+addDirectory(config.outputDir)
+  .then(() => {
+    logger.debug(`Successfully created outputDir at ${config.outputDir}.`);
+  })
+  .catch(() => {
+    logger.error(`No permission to write to ${config.outputDir}`);
+  });
 
 // TO DO: Read and parse the site.json file
 // const root = parseSite(contentDir);

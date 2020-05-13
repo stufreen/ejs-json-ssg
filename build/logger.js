@@ -8,14 +8,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var winston_1 = __importStar(require("winston"));
-var logger;
-function initializeLogger(infoLevel) {
-    logger = winston_1.default.createLogger({
-        level: infoLevel,
-        format: winston_1.format.prettyPrint(),
-        transports: [new winston_1.transports.Console()],
-    });
-    return logger;
+var logger = winston_1.default.createLogger({
+    level: 'info',
+    format: winston_1.format.combine(winston_1.format.colorize(), winston_1.format.simple()),
+    transports: [new winston_1.transports.Console()],
+});
+function setLoggerLevel(infoLevel) {
+    logger.level = infoLevel;
 }
-exports.initializeLogger = initializeLogger;
+exports.setLoggerLevel = setLoggerLevel;
 exports.default = logger;

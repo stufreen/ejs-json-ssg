@@ -1,13 +1,14 @@
 import * as path from 'path';
 import { Arguments, Config } from './types';
 import { readFileSync } from 'fs';
+import logger from './logger';
 
 const DEFAULT_CONFIG = {
   templateDir: './templates',
   outputDir: './build',
   contentDir: './content',
   defaultLanguage: 'en',
-}
+};
 
 const relativeToAbsolute = (filePath: string): string =>
   path.resolve(process.cwd(), filePath);
@@ -26,12 +27,12 @@ function getDefaultConfig(): Config {
     outputDir: relativeToAbsolute(DEFAULT_CONFIG.outputDir),
     contentDir: relativeToAbsolute(DEFAULT_CONFIG.contentDir),
     defaultLanguage: DEFAULT_CONFIG.defaultLanguage,
-  }; 
+  };
 }
 
 function readConfig(configPath: string): Config {
   const contentsBuffer = readFileSync(configPath);
-  const {templateDir, outputDir, contentDir, defaultLanguage} = JSON.parse(
+  const { templateDir, outputDir, contentDir, defaultLanguage } = JSON.parse(
     contentsBuffer.toString()
   );
 
@@ -48,6 +49,7 @@ export function getConfig(args: Arguments): Config {
     const configPath = getConfigLocation(args);
     return readConfig(configPath);
   } catch (error) {
+    logger.info('No config file found. Using defaults.');
     return getDefaultConfig();
   }
 }

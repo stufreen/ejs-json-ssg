@@ -6,9 +6,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var path = __importStar(require("path"));
 var fs_1 = require("fs");
+var logger_1 = __importDefault(require("./logger"));
 var DEFAULT_CONFIG = {
     templateDir: './templates',
     outputDir: './build',
@@ -49,6 +53,7 @@ function getConfig(args) {
         return readConfig(configPath);
     }
     catch (error) {
+        logger_1.default.info('No config file found. Using defaults.');
         return getDefaultConfig();
     }
 }
