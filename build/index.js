@@ -53,6 +53,7 @@ var config_1 = require("./config");
 var file_1 = require("./file");
 var parseSite_1 = __importDefault(require("./parseSite"));
 var validateSiteFile_1 = require("./validateSiteFile");
+var attachPaths_1 = __importDefault(require("./attachPaths"));
 var argv = yargs_1.default.options({
     c: { type: 'string', alias: 'config' },
     l: { type: 'string', alias: 'logs' },
@@ -60,7 +61,7 @@ var argv = yargs_1.default.options({
 logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
 (function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var startTime, config, rootNode, endTime, err_1;
+        var startTime, config, rootNode, rootWithPaths, endTime, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -78,10 +79,10 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
                     logger_1.default.debug("Site: " + JSON.stringify(rootNode, null, 2));
                     if (!validateSiteFile_1.isSiteNode(rootNode)) return [3 /*break*/, 5];
                     logger_1.default.debug('site.json is valid');
-                    // const rootWithPaths = attachPaths(validatedRoot);
+                    rootWithPaths = attachPaths_1.default(rootNode);
+                    logger_1.default.debug("Root with paths: " + JSON.stringify(rootWithPaths, null, 2));
                     return [4 /*yield*/, file_1.addDirectory(config.outputDir)];
                 case 4:
-                    // const rootWithPaths = attachPaths(validatedRoot);
                     _a.sent();
                     logger_1.default.debug("Created outputDir at " + config.outputDir + ".");
                     endTime = process.hrtime.bigint();

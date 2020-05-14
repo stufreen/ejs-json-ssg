@@ -5,6 +5,7 @@ import { getConfig } from './config';
 import { addDirectory } from './file';
 import parseSite from './parseSite';
 import { isSiteNode } from './validateSiteFile';
+import attachPaths from './attachPaths';
 
 const argv = yargs.options({
   c: { type: 'string', alias: 'config' },
@@ -25,7 +26,10 @@ setLoggerLevel(argv.l ?? 'info');
 
     if (isSiteNode(rootNode)) {
       logger.debug('site.json is valid');
-      // const rootWithPaths = attachPaths(validatedRoot);
+      const rootWithPaths = attachPaths(rootNode);
+      logger.debug(
+        `Root with paths: ${JSON.stringify(rootWithPaths, null, 2)}`
+      );
 
       await addDirectory(config.outputDir);
       logger.debug(`Created outputDir at ${config.outputDir}.`);

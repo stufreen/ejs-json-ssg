@@ -34,3 +34,7 @@ export interface SiteNode {
   locales?: string[];
   excludeLocales?: string[];
 }
+
+export interface SiteNodeWithPath extends SiteNode {
+  path: string;
+}
