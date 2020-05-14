@@ -86,12 +86,13 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
                     logger_1.default.debug("Created outputDir at " + config.outputDir + ".");
                     endTime = process.hrtime.bigint();
                     logger_1.default.info("Done in " + Number(endTime - startTime) / 1000000 + " milliseconds.");
+                    process.exit(0);
                     _a.label = 5;
                 case 5: return [3 /*break*/, 7];
                 case 6:
                     err_1 = _a.sent();
                     logger_1.default.error(err_1.message);
-                    process.abort();
+                    process.exit(1);
                     return [3 /*break*/, 7];
                 case 7: return [2 /*return*/];
             }

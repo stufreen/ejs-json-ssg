@@ -36,9 +36,10 @@ setLoggerLevel(argv.l ?? 'info');
       logger.info(
         `Done in ${Number(endTime - startTime) / 1000000} milliseconds.`
       );
+      process.exit(0);
     }
   } catch (err) {
     logger.error(err.message);
-    process.abort();
+    process.exit(1);
   }
 })();

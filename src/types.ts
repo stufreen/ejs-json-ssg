@@ -7,7 +7,7 @@ export interface Config {
   templateDir: string;
   outputDir: string;
   contentDir: string;
-  defaultLanguage: string;
+  defaultLocale: string;
 }
 
 export interface Field {
@@ -31,4 +31,6 @@ export interface SiteNode {
     [key: string]: any;
   };
   children?: SiteNode[];
+  locales?: string[];
+  excludeLocales?: string[];
 }
