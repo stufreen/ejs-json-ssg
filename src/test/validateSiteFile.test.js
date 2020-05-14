@@ -177,6 +177,19 @@ describe('isSiteNode', () => {
     }).toThrow();
   });
 
+  it('throws if meta is missing', () => {
+    expect(() => {
+      isSiteNode({
+        slug: 'foo',
+        template: 'bar',
+        fields: {
+          header: 'Post One',
+        },
+        children: [],
+      });
+    }).toThrow();
+  });
+
   it('throws if meta is not a meta object', () => {
     expect(() => {
       isSiteNode({
@@ -187,6 +200,19 @@ describe('isSiteNode', () => {
         fields: {
           header: 'Post One',
           content: 'This is the first post',
+        },
+        children: [],
+      });
+    }).toThrow();
+  });
+
+  it('throws if fields is missing', () => {
+    expect(() => {
+      isSiteNode({
+        slug: 'foo',
+        template: 'bar',
+        meta: {
+          title: 'Post One',
         },
         children: [],
       });
@@ -204,6 +230,22 @@ describe('isSiteNode', () => {
         },
         fields: false,
         children: [],
+      });
+    }).toThrow();
+  });
+
+  it('throws if children is missing', () => {
+    expect(() => {
+      isSiteNode({
+        slug: 'foo',
+        template: 'bar',
+        meta: {
+          title: 'Post One',
+        },
+        fields: {
+          header: 'Post One',
+          content: 'This is the first post',
+        },
       });
     }).toThrow();
   });

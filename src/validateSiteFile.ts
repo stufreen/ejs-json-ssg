@@ -62,27 +62,33 @@ export function isSiteNode(maybeNode: any): maybeNode is SiteNode {
     );
   }
 
-  if (typeof maybeNode.meta !== 'undefined' && !isMetaObject(maybeNode.meta)) {
+  if (typeof maybeNode.meta === 'undefined') {
     throw new Error(
-      `Invalid site node "${maybeNode.slug}": "meta" may only be an object where the values are strings.`
+      `Invalid site node "${maybeNode.slug}": "meta" must be an object where the values are strings.`
     );
   }
 
-  if (
-    typeof maybeNode.fields !== 'undefined' &&
-    !isMetaObject(maybeNode.fields)
-  ) {
+  if (!isMetaObject(maybeNode.meta)) {
     throw new Error(
-      `Invalid site node "${maybeNode.slug}": "fields" may only be an object where the values are Fields.`
+      `Invalid site node "${maybeNode.slug}": "meta" must be an object where the values are strings.`
     );
   }
 
-  if (
-    typeof maybeNode.children !== 'undefined' &&
-    !Array.isArray(maybeNode.children)
-  ) {
+  if (typeof maybeNode.fields === 'undefined') {
     throw new Error(
-      `Invalid site node "${maybeNode.slug}": "children" may only be an array of site nodes.`
+      `Invalid site node "${maybeNode.slug}": "fields" must be an object where the values are Fields.`
+    );
+  }
+
+  if (!isMetaObject(maybeNode.fields)) {
+    throw new Error(
+      `Invalid site node "${maybeNode.slug}": "fields" must be an object where the values are Fields.`
+    );
+  }
+
+  if (!Array.isArray(maybeNode.children)) {
+    throw new Error(
+      `Invalid site node "${maybeNode.slug}": "children" must be an array of site nodes.`
     );
   }
 
@@ -92,7 +98,7 @@ export function isSiteNode(maybeNode: any): maybeNode is SiteNode {
     !maybeNode.children.every(isSiteNode)
   ) {
     throw new Error(
-      `Invalid site node "${maybeNode.slug}": "children" may only be an array of site node.`
+      `Invalid site node "${maybeNode.slug}": "children" must be an array of site nodes.`
     );
   }
 
