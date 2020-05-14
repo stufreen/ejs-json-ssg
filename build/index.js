@@ -60,40 +60,40 @@ var argv = yargs_1.default.options({
 logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
 (function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var config, root, err_1;
+        var startTime, config, rootNode, endTime, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, config_1.getConfig(argv)];
+                case 0:
+                    startTime = process.hrtime();
+                    _a.label = 1;
                 case 1:
+                    _a.trys.push([1, 6, , 7]);
+                    return [4 /*yield*/, config_1.getConfig(argv)];
+                case 2:
                     config = _a.sent();
                     logger_1.default.debug("Config: " + JSON.stringify(config, null, 2));
                     return [4 /*yield*/, parseSite_1.default(config.contentDir)];
-                case 2:
-                    root = _a.sent();
-                    logger_1.default.debug("Site: " + JSON.stringify(root, null, 2));
-                    // Validate the site.json type
-                    try {
-                        if (validateSiteFile_1.isSiteNode(root)) {
-                            logger_1.default.debug('site.json is valid');
-                        }
-                    }
-                    catch (err) {
-                        logger_1.default.error(err.message + " Exiting.");
-                        return [2 /*return*/];
-                    }
-                    _a.label = 3;
                 case 3:
-                    _a.trys.push([3, 5, , 6]);
+                    rootNode = _a.sent();
+                    logger_1.default.debug("Site: " + JSON.stringify(rootNode, null, 2));
+                    if (!validateSiteFile_1.isSiteNode(rootNode)) return [3 /*break*/, 5];
+                    logger_1.default.debug('site.json is valid');
+                    // const rootWithPaths = attachPaths(validatedRoot);
                     return [4 /*yield*/, file_1.addDirectory(config.outputDir)];
                 case 4:
+                    // const rootWithPaths = attachPaths(validatedRoot);
                     _a.sent();
-                    logger_1.default.info("Created outputDir at " + config.outputDir + ".");
-                    return [3 /*break*/, 6];
-                case 5:
+                    logger_1.default.debug("Created outputDir at " + config.outputDir + ".");
+                    endTime = process.hrtime(startTime);
+                    logger_1.default.info("Done in " + endTime[1] / 1000000 + " milliseconds.");
+                    _a.label = 5;
+                case 5: return [3 /*break*/, 7];
+                case 6:
                     err_1 = _a.sent();
-                    logger_1.default.error("No permission to write to " + config.outputDir + ". Exiting.");
-                    return [2 /*return*/];
-                case 6: return [2 /*return*/];
+                    logger_1.default.error(err_1.message);
+                    process.abort();
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     });

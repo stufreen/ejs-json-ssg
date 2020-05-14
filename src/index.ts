@@ -14,6 +14,32 @@ const argv = yargs.options({
 setLoggerLevel(argv.l ?? 'info');
 
 (async function main(): Promise<void> {
+  const startTime = process.hrtime();
+
+  try {
+    const config = await getConfig(argv);
+    logger.debug(`Config: ${JSON.stringify(config, null, 2)}`);
+
+    const rootNode = await parseSite(config.contentDir);
+    logger.debug(`Site: ${JSON.stringify(rootNode, null, 2)}`);
+
+    if (isSiteNode(rootNode)) {
+      logger.debug('site.json is valid');
+      // const rootWithPaths = attachPaths(validatedRoot);
+
+      await addDirectory(config.outputDir);
+      logger.debug(`Created outputDir at ${config.outputDir}.`);
+
+      // generateTemplates(rootWithPaths);
+
+      const endTime = process.hrtime(startTime);
+      logger.info(`Done in ${endTime[1] / 1000000} milliseconds.`);
+    }
+  } catch (err) {
+    logger.error(err.message);
+    process.abort();
+  }
+  /*
   // Read config
   const config = await getConfig(argv);
   logger.debug(`Config: ${JSON.stringify(config, null, 2)}`);
@@ -44,4 +70,5 @@ setLoggerLevel(argv.l ?? 'info');
   }
 
   // TO DO: Generate HTML files from EJS tempaltes
+  */
 })();
