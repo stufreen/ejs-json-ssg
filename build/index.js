@@ -64,7 +64,7 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    startTime = process.hrtime();
+                    startTime = process.hrtime.bigint();
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 6, , 7]);
@@ -84,8 +84,8 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
                     // const rootWithPaths = attachPaths(validatedRoot);
                     _a.sent();
                     logger_1.default.debug("Created outputDir at " + config.outputDir + ".");
-                    endTime = process.hrtime(startTime);
-                    logger_1.default.info("Done in " + endTime[1] / 1000000 + " milliseconds.");
+                    endTime = process.hrtime.bigint();
+                    logger_1.default.info("Done in " + Number(endTime - startTime) / 1000000 + " milliseconds.");
                     _a.label = 5;
                 case 5: return [3 /*break*/, 7];
                 case 6:
