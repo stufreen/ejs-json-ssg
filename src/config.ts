@@ -7,7 +7,7 @@ const DEFAULT_CONFIG = {
   templateDir: './templates',
   outputDir: './build',
   contentDir: './content',
-  defaultLanguage: 'en',
+  defaultLocale: 'en',
 };
 
 const relativeToAbsolute = (filePath: string): string =>
@@ -26,13 +26,13 @@ function getDefaultConfig(): Promise<Config> {
     templateDir: relativeToAbsolute(DEFAULT_CONFIG.templateDir),
     outputDir: relativeToAbsolute(DEFAULT_CONFIG.outputDir),
     contentDir: relativeToAbsolute(DEFAULT_CONFIG.contentDir),
-    defaultLanguage: DEFAULT_CONFIG.defaultLanguage,
+    defaultLocale: DEFAULT_CONFIG.defaultLocale,
   });
 }
 
 function readConfig(configPath: string): Promise<Config> {
   return promises.readFile(configPath, 'utf-8').then((contents) => {
-    const { templateDir, outputDir, contentDir, defaultLanguage } = JSON.parse(
+    const { templateDir, outputDir, contentDir, defaultLocale } = JSON.parse(
       contents
     );
 
@@ -42,7 +42,7 @@ function readConfig(configPath: string): Promise<Config> {
       ),
       outputDir: relativeToAbsolute(outputDir ?? DEFAULT_CONFIG.outputDir),
       contentDir: relativeToAbsolute(contentDir ?? DEFAULT_CONFIG.contentDir),
-      defaultLanguage: defaultLanguage ?? DEFAULT_CONFIG.defaultLanguage,
+      defaultLocale: defaultLocale ?? DEFAULT_CONFIG.defaultLocale,
     };
   });
 }

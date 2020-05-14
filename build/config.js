@@ -17,7 +17,7 @@ var DEFAULT_CONFIG = {
     templateDir: './templates',
     outputDir: './build',
     contentDir: './content',
-    defaultLanguage: 'en',
+    defaultLocale: 'en',
 };
 var relativeToAbsolute = function (filePath) {
     return path.resolve(process.cwd(), filePath);
@@ -34,17 +34,17 @@ function getDefaultConfig() {
         templateDir: relativeToAbsolute(DEFAULT_CONFIG.templateDir),
         outputDir: relativeToAbsolute(DEFAULT_CONFIG.outputDir),
         contentDir: relativeToAbsolute(DEFAULT_CONFIG.contentDir),
-        defaultLanguage: DEFAULT_CONFIG.defaultLanguage,
+        defaultLocale: DEFAULT_CONFIG.defaultLocale,
     });
 }
 function readConfig(configPath) {
     return fs_1.promises.readFile(configPath, 'utf-8').then(function (contents) {
-        var _a = JSON.parse(contents), templateDir = _a.templateDir, outputDir = _a.outputDir, contentDir = _a.contentDir, defaultLanguage = _a.defaultLanguage;
+        var _a = JSON.parse(contents), templateDir = _a.templateDir, outputDir = _a.outputDir, contentDir = _a.contentDir, defaultLocale = _a.defaultLocale;
         return {
             templateDir: relativeToAbsolute(templateDir !== null && templateDir !== void 0 ? templateDir : DEFAULT_CONFIG.templateDir),
             outputDir: relativeToAbsolute(outputDir !== null && outputDir !== void 0 ? outputDir : DEFAULT_CONFIG.outputDir),
             contentDir: relativeToAbsolute(contentDir !== null && contentDir !== void 0 ? contentDir : DEFAULT_CONFIG.contentDir),
-            defaultLanguage: defaultLanguage !== null && defaultLanguage !== void 0 ? defaultLanguage : DEFAULT_CONFIG.defaultLanguage,
+            defaultLocale: defaultLocale !== null && defaultLocale !== void 0 ? defaultLocale : DEFAULT_CONFIG.defaultLocale,
         };
     });
 }
