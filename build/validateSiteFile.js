@@ -11,7 +11,9 @@ function isFieldObject(maybeFieldObject) {
 }
 exports.isFieldObject = isFieldObject;
 function isMetaObject(maybeMetaObject) {
-    if (typeof maybeMetaObject !== 'object' || maybeMetaObject === null) {
+    if (typeof maybeMetaObject !== 'object' ||
+        maybeMetaObject === null ||
+        Array.isArray(maybeMetaObject)) {
         throw new Error();
     }
     var allStrings = Object.keys(maybeMetaObject).every(function (key) {
@@ -33,7 +35,7 @@ function isSiteNode(maybeNode) {
     if (!exports.isString(maybeNode.template)) {
         throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"template\" must be a string.");
     }
-    if (typeof maybeNode.meta !== 'undefined' &&
+    if (typeof maybeNode.visible !== 'undefined' &&
         typeof maybeNode.visible !== 'boolean') {
         throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"visible\" may only be boolean or undefined.");
     }
