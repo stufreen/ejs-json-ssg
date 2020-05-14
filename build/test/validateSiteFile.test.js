@@ -154,6 +154,18 @@ describe('isSiteNode', function () {
             });
         }).toThrow();
     });
+    it('throws if meta is missing', function () {
+        expect(function () {
+            validateSiteFile_1.isSiteNode({
+                slug: 'foo',
+                template: 'bar',
+                fields: {
+                    header: 'Post One',
+                },
+                children: [],
+            });
+        }).toThrow();
+    });
     it('throws if meta is not a meta object', function () {
         expect(function () {
             validateSiteFile_1.isSiteNode({
@@ -164,6 +176,18 @@ describe('isSiteNode', function () {
                 fields: {
                     header: 'Post One',
                     content: 'This is the first post',
+                },
+                children: [],
+            });
+        }).toThrow();
+    });
+    it('throws if fields is missing', function () {
+        expect(function () {
+            validateSiteFile_1.isSiteNode({
+                slug: 'foo',
+                template: 'bar',
+                meta: {
+                    title: 'Post One',
                 },
                 children: [],
             });
@@ -180,6 +204,21 @@ describe('isSiteNode', function () {
                 },
                 fields: false,
                 children: [],
+            });
+        }).toThrow();
+    });
+    it('throws if children is missing', function () {
+        expect(function () {
+            validateSiteFile_1.isSiteNode({
+                slug: 'foo',
+                template: 'bar',
+                meta: {
+                    title: 'Post One',
+                },
+                fields: {
+                    header: 'Post One',
+                    content: 'This is the first post',
+                },
             });
         }).toThrow();
     });

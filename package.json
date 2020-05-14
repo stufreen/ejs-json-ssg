@@ -4,6 +4,7 @@
   "description": "A static site generator that turns ejs and json files into HTML",
   "main": "build/index.js",
   "dependencies": {
+    "ejs": "^3.1.2",
     "winston": "^3.2.1",
     "yargs": "^15.3.1"
   },
@@ -11,6 +12,7 @@
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-typescript": "^7.9.0",
+    "@types/ejs": "^3.0.3",
     "@types/jest": "^25.2.1",
     "@types/node": "^13.13.5",
     "@types/yargs": "^15.0.4",

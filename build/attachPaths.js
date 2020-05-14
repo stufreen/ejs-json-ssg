@@ -12,14 +12,14 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 function attachPath(node, parentPath) {
-    var nodeWithPath = __assign(__assign({}, node), { path: "" + parentPath + node.slug + "/" });
-    if (nodeWithPath.children) {
-        nodeWithPath.children = nodeWithPath.children.map(function (childNode) {
-            return attachPath(childNode, nodeWithPath.path);
-        });
-    }
+    var nodePath = "" + parentPath + node.slug + "/";
+    var childrenWithPaths = node.children.map(function (childNode) {
+        return attachPath(childNode, nodePath);
+    });
+    var nodeWithPath = __assign(__assign({}, node), { path: nodePath, children: childrenWithPaths });
     return nodeWithPath;
 }
+exports.attachPath = attachPath;
 function attachPaths(siteNode) {
     return attachPath(siteNode, '');
 }

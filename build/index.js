@@ -50,10 +50,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var yargs_1 = __importDefault(require("yargs"));
 var logger_1 = __importStar(require("./logger"));
 var config_1 = require("./config");
-var file_1 = require("./file");
 var parseSite_1 = __importDefault(require("./parseSite"));
 var validateSiteFile_1 = require("./validateSiteFile");
 var attachPaths_1 = __importDefault(require("./attachPaths"));
+var generateTemplates_1 = __importDefault(require("./generateTemplates"));
 var argv = yargs_1.default.options({
     c: { type: 'string', alias: 'config' },
     l: { type: 'string', alias: 'logs' },
@@ -61,14 +61,14 @@ var argv = yargs_1.default.options({
 logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
 (function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var startTime, config, rootNode, rootWithPaths, endTime, err_1;
+        var startTime, config, rootNode, rootWithPaths, err_1, endTime, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     startTime = process.hrtime.bigint();
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 6, , 7]);
+                    _a.trys.push([1, 9, , 10]);
                     return [4 /*yield*/, config_1.getConfig(argv)];
                 case 2:
                     config = _a.sent();
@@ -77,25 +77,37 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
                 case 3:
                     rootNode = _a.sent();
                     logger_1.default.debug("Site: " + JSON.stringify(rootNode, null, 2));
-                    if (!validateSiteFile_1.isSiteNode(rootNode)) return [3 /*break*/, 5];
+                    if (!validateSiteFile_1.isSiteNode(rootNode)) return [3 /*break*/, 8];
                     logger_1.default.debug('site.json is valid');
                     rootWithPaths = attachPaths_1.default(rootNode);
                     logger_1.default.debug("Root with paths: " + JSON.stringify(rootWithPaths, null, 2));
-                    return [4 /*yield*/, file_1.addDirectory(config.outputDir)];
+                    _a.label = 4;
                 case 4:
+                    _a.trys.push([4, 6, , 7]);
+                    return [4 /*yield*/, generateTemplates_1.default({
+                            rootNode: rootWithPaths,
+                            templateDir: config.templateDir,
+                            outputDir: config.outputDir,
+                            contentDir: config.contentDir,
+                        })];
+                case 5:
                     _a.sent();
-                    logger_1.default.debug("Created outputDir at " + config.outputDir + ".");
+                    return [3 /*break*/, 7];
+                case 6:
+                    err_1 = _a.sent();
+                    throw new Error(err_1);
+                case 7:
                     endTime = process.hrtime.bigint();
                     logger_1.default.info("Done in " + Number(endTime - startTime) / 1000000 + " milliseconds.");
                     process.exit(0);
-                    _a.label = 5;
-                case 5: return [3 /*break*/, 7];
-                case 6:
-                    err_1 = _a.sent();
-                    logger_1.default.error(err_1.message);
+                    _a.label = 8;
+                case 8: return [3 /*break*/, 10];
+                case 9:
+                    err_2 = _a.sent();
+                    logger_1.default.error(err_2.message);
                     process.exit(1);
-                    return [3 /*break*/, 7];
-                case 7: return [2 /*return*/];
+                    return [3 /*break*/, 10];
+                case 10: return [2 /*return*/];
             }
         });
     });

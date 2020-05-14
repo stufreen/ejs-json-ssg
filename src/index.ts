@@ -2,10 +2,10 @@ import yargs from 'yargs';
 
 import logger, { setLoggerLevel } from './logger';
 import { getConfig } from './config';
-import { addDirectory } from './file';
 import parseSite from './parseSite';
 import { isSiteNode } from './validateSiteFile';
 import attachPaths from './attachPaths';
+import generateTemplates from './generateTemplates';
 
 const argv = yargs.options({
   c: { type: 'string', alias: 'config' },
@@ -31,10 +31,16 @@ setLoggerLevel(argv.l ?? 'info');
         `Root with paths: ${JSON.stringify(rootWithPaths, null, 2)}`
       );
 
-      await addDirectory(config.outputDir);
-      logger.debug(`Created outputDir at ${config.outputDir}.`);
-
-      // generateTemplates(rootWithPaths);
+      try {
+        await generateTemplates({
+          rootNode: rootWithPaths,
+          templateDir: config.templateDir,
+          outputDir: config.outputDir,
+          contentDir: config.contentDir,
+        });
+      } catch (err) {
+        throw new Error(err);
+      }
 
       const endTime = process.hrtime.bigint();
       logger.info(

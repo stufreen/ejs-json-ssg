@@ -39,21 +39,25 @@ function isSiteNode(maybeNode) {
         typeof maybeNode.visible !== 'boolean') {
         throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"visible\" may only be boolean or undefined.");
     }
-    if (typeof maybeNode.meta !== 'undefined' && !isMetaObject(maybeNode.meta)) {
-        throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"meta\" may only be an object where the values are strings.");
+    if (typeof maybeNode.meta === 'undefined') {
+        throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"meta\" must be an object where the values are strings.");
     }
-    if (typeof maybeNode.fields !== 'undefined' &&
-        !isMetaObject(maybeNode.fields)) {
-        throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"fields\" may only be an object where the values are Fields.");
+    if (!isMetaObject(maybeNode.meta)) {
+        throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"meta\" must be an object where the values are strings.");
     }
-    if (typeof maybeNode.children !== 'undefined' &&
-        !Array.isArray(maybeNode.children)) {
-        throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"children\" may only be an array of site nodes.");
+    if (typeof maybeNode.fields === 'undefined') {
+        throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"fields\" must be an object where the values are Fields.");
+    }
+    if (!isMetaObject(maybeNode.fields)) {
+        throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"fields\" must be an object where the values are Fields.");
+    }
+    if (!Array.isArray(maybeNode.children)) {
+        throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"children\" must be an array of site nodes.");
     }
     if (typeof maybeNode.children !== 'undefined' &&
         Array.isArray(maybeNode.children) &&
         !maybeNode.children.every(isSiteNode)) {
-        throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"children\" may only be an array of site node.");
+        throw new Error("Invalid site node \"" + maybeNode.slug + "\": \"children\" must be an array of site nodes.");
     }
     return true;
 }
