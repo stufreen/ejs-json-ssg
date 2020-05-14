@@ -14,7 +14,7 @@ const argv = yargs.options({
 setLoggerLevel(argv.l ?? 'info');
 
 (async function main(): Promise<void> {
-  const startTime = process.hrtime();
+  const startTime = process.hrtime.bigint();
 
   try {
     const config = await getConfig(argv);
@@ -32,8 +32,10 @@ setLoggerLevel(argv.l ?? 'info');
 
       // generateTemplates(rootWithPaths);
 
-      const endTime = process.hrtime(startTime);
-      logger.info(`Done in ${endTime[1] / 1000000} milliseconds.`);
+      const endTime = process.hrtime.bigint();
+      logger.info(
+        `Done in ${Number(endTime - startTime) / 1000000} milliseconds.`
+      );
     }
   } catch (err) {
     logger.error(err.message);
