@@ -72,8 +72,11 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
                     root = _a.sent();
                     logger_1.default.debug("Site: " + JSON.stringify(root, null, 2));
                     // Validate the site.json type
-                    if (!validateSiteFile_1.isSiteNode(root)) {
-                        logger_1.default.error('Invalid site.json. Exiting.');
+                    try {
+                        validateSiteFile_1.isSiteNode(root);
+                    }
+                    catch (err) {
+                        logger_1.default.error(err + " Exiting.");
                         return [2 /*return*/];
                     }
                     _a.label = 3;

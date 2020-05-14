@@ -23,8 +23,10 @@ setLoggerLevel(argv.l ?? 'info');
   logger.debug(`Site: ${JSON.stringify(root, null, 2)}`);
 
   // Validate the site.json type
-  if (!isSiteNode(root)) {
-    logger.error('Invalid site.json. Exiting.');
+  try {
+    isSiteNode(root);
+  } catch (err) {
+    logger.error(`${err} Exiting.`);
     return;
   }
 

@@ -1,58 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Field, SiteNode } from './types';
-import logger from './logger';
+import { SiteNode } from './types';
 
 export const isString = (value: any): boolean =>
   typeof value === 'string' || value instanceof String;
 
 export function isFieldObject(maybeFieldObject: any): boolean {
   if (typeof maybeFieldObject !== 'object' || maybeFieldObject === null) {
-    return false;
+    throw new Error();
   }
 
-  return Object.keys(maybeFieldObject).every((key) => {
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    return isField(maybeFieldObject[key]);
-  });
+  return true;
 }
 
 export function isMetaObject(maybeMetaObject: any): boolean {
-  if (typeof maybeMetaObject !== 'object' || maybeMetaObject === null) {
-    return false;
+  if (
+    typeof maybeMetaObject !== 'object' ||
+    maybeMetaObject === null ||
+    Array.isArray(maybeMetaObject)
+  ) {
+    throw new Error();
   }
 
-  return Object.keys(maybeMetaObject).every((key) => {
+  const allStrings = Object.keys(maybeMetaObject).every((key) => {
     return isString(maybeMetaObject[key]);
   });
-}
 
-export function isField(maybeField: any): maybeField is Field {
-  if (!maybeField.type) {
-    logger.warn('Invalid field: missing "type"');
-    return false;
-  }
-
-  if (!isString(maybeField.type)) {
-    logger.warn('Invalid field: "type" must be a string');
-    return false;
-  }
-
-  if (typeof maybeField.value === 'undefined') {
-    logger.warn('Invalid field: "value" is not defined');
-    return false;
-  }
-
-  if (
-    typeof maybeField.value !== 'boolean' &&
-    typeof maybeField.value !== 'number' &&
-    maybeField !== null &&
-    !isString(maybeField.value) &&
-    !isFieldObject(maybeField.value)
-  ) {
-    logger.warn(
-      'Invalid field: "value" can be a boolean, number, string, null or array of fields'
-    );
-    return false;
+  if (!allStrings) {
+    throw new Error();
   }
 
   return true;
@@ -60,55 +34,56 @@ export function isField(maybeField: any): maybeField is Field {
 
 export function isSiteNode(maybeNode: any): maybeNode is SiteNode {
   if (!isString(maybeNode.slug)) {
-    logger.warn('Invalid site node: "slug" must be a string');
-    return false;
+    throw new Error(
+      `Invalid site node ${JSON.stringify(
+        maybeNode
+      )}: required property "slug" must be a string.`
+    );
   }
 
   if (!maybeNode.template) {
-    logger.warn('Invalid site node: missing "template"');
-    return false;
+    throw new Error(
+      `Invalid site node "${maybeNode.slug}": missing "template".`
+    );
   }
 
   if (!isString(maybeNode.template)) {
-    logger.warn('Invalid site node: "template" must be a string');
-    return false;
+    throw new Error(
+      `Invalid site node "${maybeNode.slug}": "template" must be a string.`
+    );
   }
 
   if (
-    typeof maybeNode.meta !== 'undefined' &&
+    typeof maybeNode.visible !== 'undefined' &&
     typeof maybeNode.visible !== 'boolean'
   ) {
-    logger.warn(
-      'Invalid site node: "visible" may only be boolean or undefined'
+    throw new Error(
+      `Invalid site node "${maybeNode.slug}": "visible" may only be boolean or undefined.`
     );
-    return false;
   }
 
   if (typeof maybeNode.meta !== 'undefined' && !isMetaObject(maybeNode.meta)) {
-    logger.warn(
-      'Invalid site node: "meta" may only be an object where the values are strings'
+    throw new Error(
+      `Invalid site node "${maybeNode.slug}": "meta" may only be an object where the values are strings.`
     );
-    return false;
   }
 
   if (
     typeof maybeNode.fields !== 'undefined' &&
     !isMetaObject(maybeNode.fields)
   ) {
-    logger.warn(
-      'Invalid site node: "fields" may only be an object where the values are Fields'
+    throw new Error(
+      `Invalid site node "${maybeNode.slug}": "fields" may only be an object where the values are Fields.`
     );
-    return false;
   }
 
   if (
     typeof maybeNode.children !== 'undefined' &&
     !Array.isArray(maybeNode.children)
   ) {
-    logger.warn(
-      'Invalid site node: "children" may only be an array of site nodes'
+    throw new Error(
+      `Invalid site node "${maybeNode.slug}": "children" may only be an array of site nodes.`
     );
-    return false;
   }
 
   if (
@@ -116,10 +91,9 @@ export function isSiteNode(maybeNode: any): maybeNode is SiteNode {
     Array.isArray(maybeNode.children) &&
     !maybeNode.children.every(isSiteNode)
   ) {
-    logger.warn(
-      'Invalid site node: "children" may only be an array of site nodes'
+    throw new Error(
+      `Invalid site node "${maybeNode.slug}": "children" may only be an array of site node.`
     );
-    return false;
   }
 
   return true;
