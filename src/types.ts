@@ -23,18 +23,19 @@ export interface SiteNode {
   slug: string;
   template: string;
   visible?: boolean;
-  meta?: {
+  meta: {
     [key: string]: string;
   };
-  fields?: {
+  fields: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };
-  children?: SiteNode[];
+  children: SiteNode[];
   locales?: string[];
   excludeLocales?: string[];
 }
 
 export interface SiteNodeWithPath extends SiteNode {
   path: string;
+  children: SiteNodeWithPath[];
 }

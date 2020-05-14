@@ -1,16 +1,20 @@
 import { SiteNode, SiteNodeWithPath } from './types';
 
-function attachPath(node: SiteNode, parentPath: string): SiteNodeWithPath {
-  const nodeWithPath = {
-    ...node,
-    path: `${parentPath}${node.slug}/`,
-  };
+export function attachPath(
+  node: SiteNode,
+  parentPath: string
+): SiteNodeWithPath {
+  const nodePath = `${parentPath}${node.slug}/`;
 
-  if (nodeWithPath.children) {
-    nodeWithPath.children = nodeWithPath.children.map((childNode) => {
-      return attachPath(childNode, nodeWithPath.path);
-    });
-  }
+  const childrenWithPaths = node.children.map((childNode) => {
+    return attachPath(childNode, nodePath);
+  });
+
+  const nodeWithPath: SiteNodeWithPath = {
+    ...node,
+    path: nodePath,
+    children: childrenWithPaths,
+  };
 
   return nodeWithPath;
 }
