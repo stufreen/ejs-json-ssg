@@ -109,10 +109,10 @@ function compilePage(_a) {
                             contentDir: contentDir,
                         });
                     });
-                    return [4 /*yield*/, safeMkDir(outputDir + siteNode.path)];
+                    return [4 /*yield*/, safeMkDir(path_1.default.join(outputDir, siteNode.path))];
                 case 2:
                     _b.sent();
-                    return [4 /*yield*/, fs_1.promises.writeFile("" + outputDir + siteNode.path + "index.html", renderedHtml, 'utf8')];
+                    return [4 /*yield*/, fs_1.promises.writeFile(path_1.default.join(outputDir, siteNode.path, 'index.html'), renderedHtml, 'utf8')];
                 case 3:
                     _b.sent();
                     logger_1.default.info(siteNode.path + "index.html");

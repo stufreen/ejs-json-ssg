@@ -70,9 +70,9 @@ async function compilePage({
       contentDir,
     })
   );
-  await safeMkDir(outputDir + siteNode.path);
+  await safeMkDir(path.join(outputDir, siteNode.path));
   await promises.writeFile(
-    `${outputDir}${siteNode.path}index.html`,
+    path.join(outputDir, siteNode.path, 'index.html'),
     renderedHtml,
     'utf8'
   );
