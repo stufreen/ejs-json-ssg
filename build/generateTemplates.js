@@ -91,7 +91,7 @@ function findNode(siteNode, slug) {
     return undefined;
 }
 function processTemplate(templatePath, siteNode, root) {
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
         var data = __assign(__assign({}, siteNode), { root: root });
         ejs.renderFile(templatePath, data, {
             context: {
@@ -99,8 +99,7 @@ function processTemplate(templatePath, siteNode, root) {
             },
         }, function (err, str) {
             if (err) {
-                logger_1.default.error(err);
-                throw new Error("Could not render template for \"" + siteNode.slug + "\"");
+                reject("Could not render template for \"" + siteNode.slug + "\".\n\n" + err.message + "\n");
             }
             resolve(str);
         });
@@ -115,11 +114,18 @@ function compilePage(_a) {
                 case 0:
                     templatePath = templateMap[siteNode.template];
                     if (typeof templatePath === 'undefined') {
-                        throw new Error("No .ejs file found for template \"" + siteNode.template + "\"");
+                        return [2 /*return*/, Promise.reject("No .ejs file found for template \"" + siteNode.template + "\"")];
                     }
                     return [4 /*yield*/, processTemplate(templatePath, siteNode, rootNode)];
                 case 1:
                     renderedHtml = _b.sent();
+                    return [4 /*yield*/, safeMkDir(path_1.default.join(outputDir, siteNode.path))];
+                case 2:
+                    _b.sent();
+                    return [4 /*yield*/, fs_1.promises.writeFile(path_1.default.join(outputDir, siteNode.path, 'index.html'), renderedHtml, 'utf8')];
+                case 3:
+                    _b.sent();
+                    logger_1.default.verbose("Generated " + siteNode.path + "index.html");
                     subCompileJobs = siteNode.children.map(function (child) {
                         return compilePage({
                             siteNode: child,
@@ -129,13 +135,6 @@ function compilePage(_a) {
                             contentDir: contentDir,
                         });
                     });
-                    return [4 /*yield*/, safeMkDir(path_1.default.join(outputDir, siteNode.path))];
-                case 2:
-                    _b.sent();
-                    return [4 /*yield*/, fs_1.promises.writeFile(path_1.default.join(outputDir, siteNode.path, 'index.html'), renderedHtml, 'utf8')];
-                case 3:
-                    _b.sent();
-                    logger_1.default.info(siteNode.path + "index.html");
                     return [4 /*yield*/, Promise.all(subCompileJobs)];
                 case 4:
                     _b.sent();

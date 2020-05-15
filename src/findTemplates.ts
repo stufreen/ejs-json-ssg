@@ -5,7 +5,6 @@ import { TemplateMap } from './types';
 export default function findTemplates(dir: string): TemplateMap {
   return readdirSync(dir).reduce((accumulator, f) => {
     const filePath = path.join(dir, f);
-    console.log(filePath);
     const isDirectory = statSync(filePath).isDirectory();
     if (isDirectory) {
       return {

@@ -22,15 +22,16 @@ setLoggerLevel(argv.l ?? 'info');
     logger.debug(`Config: ${JSON.stringify(config, null, 2)}`);
 
     const rootNode = await parseSite(config.contentDir);
-    logger.debug(`Site: ${JSON.stringify(rootNode, null, 2)}`);
+    logger.silly(`Site: ${JSON.stringify(rootNode, null, 2)}`);
 
     if (isSiteNode(rootNode)) {
       logger.debug('site.json is valid');
       const rootWithPaths = attachPaths(rootNode);
-      logger.debug(
+      logger.silly(
         `Root with paths: ${JSON.stringify(rootWithPaths, null, 2)}`
       );
 
+      logger.info('Rendering site...');
       try {
         await generateTemplates({
           rootNode: rootWithPaths,
@@ -50,6 +51,7 @@ setLoggerLevel(argv.l ?? 'info');
     }
   } catch (err) {
     logger.error(err.message);
+    logger.error('Exiting.');
     process.exit(1);
   }
 })();

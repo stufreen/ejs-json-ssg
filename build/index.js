@@ -76,11 +76,12 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
                     return [4 /*yield*/, parseSite_1.default(config.contentDir)];
                 case 3:
                     rootNode = _a.sent();
-                    logger_1.default.debug("Site: " + JSON.stringify(rootNode, null, 2));
+                    logger_1.default.silly("Site: " + JSON.stringify(rootNode, null, 2));
                     if (!validateSiteFile_1.isSiteNode(rootNode)) return [3 /*break*/, 8];
                     logger_1.default.debug('site.json is valid');
                     rootWithPaths = attachPaths_1.default(rootNode);
-                    logger_1.default.debug("Root with paths: " + JSON.stringify(rootWithPaths, null, 2));
+                    logger_1.default.silly("Root with paths: " + JSON.stringify(rootWithPaths, null, 2));
+                    logger_1.default.info('Rendering site...');
                     _a.label = 4;
                 case 4:
                     _a.trys.push([4, 6, , 7]);
@@ -105,6 +106,7 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
                 case 9:
                     err_2 = _a.sent();
                     logger_1.default.error(err_2.message);
+                    logger_1.default.error('Exiting.');
                     process.exit(1);
                     return [3 /*break*/, 10];
                 case 10: return [2 /*return*/];

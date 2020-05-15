@@ -20,7 +20,6 @@ function findTemplates(dir) {
     return fs_1.readdirSync(dir).reduce(function (accumulator, f) {
         var _a;
         var filePath = path_1.default.join(dir, f);
-        console.log(filePath);
         var isDirectory = fs_1.statSync(filePath).isDirectory();
         if (isDirectory) {
             return __assign(__assign({}, accumulator), findTemplates(filePath));

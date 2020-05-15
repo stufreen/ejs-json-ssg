@@ -54,7 +54,7 @@ function processTemplate(
   siteNode: SiteNodeWithPath,
   root: SiteNodeWithPath
 ): Promise<string> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const data = { ...siteNode, root };
     ejs.renderFile(
       templatePath,
@@ -66,8 +66,9 @@ function processTemplate(
       },
       function (err, str) {
         if (err) {
-          logger.error(err);
-          throw new Error(`Could not render template for "${siteNode.slug}"`);
+          reject(
+            `Could not render template for "${siteNode.slug}".\n\n${err.message}\n`
+          );
         }
         resolve(str);
       }
@@ -84,10 +85,19 @@ async function compilePage({
 }: CompilePage): Promise<void> {
   const templatePath = templateMap[siteNode.template];
   if (typeof templatePath === 'undefined') {
-    throw new Error(`No .ejs file found for template "${siteNode.template}"`);
+    return Promise.reject(
+      `No .ejs file found for template "${siteNode.template}"`
+    );
   }
 
   const renderedHtml = await processTemplate(templatePath, siteNode, rootNode);
+  await safeMkDir(path.join(outputDir, siteNode.path));
+  await promises.writeFile(
+    path.join(outputDir, siteNode.path, 'index.html'),
+    renderedHtml,
+    'utf8'
+  );
+  logger.verbose(`Generated ${siteNode.path}index.html`);
   const subCompileJobs = siteNode.children.map((child) =>
     compilePage({
       siteNode: child,
@@ -97,13 +107,6 @@ async function compilePage({
       contentDir,
     })
   );
-  await safeMkDir(path.join(outputDir, siteNode.path));
-  await promises.writeFile(
-    path.join(outputDir, siteNode.path, 'index.html'),
-    renderedHtml,
-    'utf8'
-  );
-  logger.info(`${siteNode.path}index.html`);
   await Promise.all(subCompileJobs);
 }
 
