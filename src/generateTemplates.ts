@@ -1,9 +1,10 @@
 import * as ejs from 'ejs';
 import { access, mkdir, constants, promises } from 'fs';
 
-import { SiteNodeWithPath } from './types';
+import { SiteNodeWithPath, TemplateMap, SiteNode } from './types';
 import logger from './logger';
 import path from 'path';
+import findTemplates from './findTemplates';
 
 interface GenerateTemplates {
   rootNode: SiteNodeWithPath;
@@ -15,7 +16,7 @@ interface GenerateTemplates {
 interface CompilePage {
   siteNode: SiteNodeWithPath;
   rootNode: SiteNodeWithPath;
-  templateDir: string;
+  templateMap: TemplateMap;
   outputDir: string;
   contentDir: string;
 }
@@ -35,6 +36,19 @@ function safeMkDir(path: string): Promise<void> {
   });
 }
 
+function findNode(siteNode: SiteNode, slug: string): SiteNode | undefined {
+  if (siteNode.slug === slug) {
+    return siteNode;
+  }
+  for (let i = 0; i < siteNode.children.length; i++) {
+    const result = findNode(siteNode.children[i], slug);
+    if (result) {
+      return result;
+    }
+  }
+  return undefined;
+}
+
 function processTemplate(
   templatePath: string,
   siteNode: SiteNodeWithPath,
@@ -42,30 +56,43 @@ function processTemplate(
 ): Promise<string> {
   return new Promise((resolve) => {
     const data = { ...siteNode, root };
-    ejs.renderFile(templatePath, data, {}, function (err, str) {
-      if (err) {
-        logger.error(err);
-        throw new Error(`Could not render template for "${siteNode.slug}"`);
+    ejs.renderFile(
+      templatePath,
+      data,
+      {
+        context: {
+          find: (slug: string): SiteNode | undefined => findNode(root, slug),
+        },
+      },
+      function (err, str) {
+        if (err) {
+          logger.error(err);
+          throw new Error(`Could not render template for "${siteNode.slug}"`);
+        }
+        resolve(str);
       }
-      resolve(str);
-    });
+    );
   });
 }
 
 async function compilePage({
   siteNode,
   rootNode,
-  templateDir,
+  templateMap,
   outputDir,
   contentDir,
 }: CompilePage): Promise<void> {
-  const templatePath = path.resolve(templateDir, `${siteNode.template}.ejs`);
+  const templatePath = templateMap[siteNode.template];
+  if (typeof templatePath === 'undefined') {
+    throw new Error(`No .ejs file found for template "${siteNode.template}"`);
+  }
+
   const renderedHtml = await processTemplate(templatePath, siteNode, rootNode);
   const subCompileJobs = siteNode.children.map((child) =>
     compilePage({
       siteNode: child,
       rootNode,
-      templateDir,
+      templateMap,
       outputDir,
       contentDir,
     })
@@ -86,10 +113,12 @@ export default function generateTemplates({
   outputDir,
   contentDir,
 }: GenerateTemplates): Promise<void> {
+  const templateMap = findTemplates(templateDir);
+  logger.debug('Found templates:\n' + JSON.stringify(templateMap, null, 2));
   return compilePage({
     rootNode,
     siteNode: rootNode,
-    templateDir,
+    templateMap,
     outputDir,
     contentDir,
   });

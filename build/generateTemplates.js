@@ -61,6 +61,7 @@ var ejs = __importStar(require("ejs"));
 var fs_1 = require("fs");
 var logger_1 = __importDefault(require("./logger"));
 var path_1 = __importDefault(require("path"));
+var findTemplates_1 = __importDefault(require("./findTemplates"));
 function safeMkDir(path) {
     return new Promise(function (resolve) {
         fs_1.access(path, fs_1.constants.F_OK, function (err) {
@@ -77,10 +78,26 @@ function safeMkDir(path) {
         });
     });
 }
+function findNode(siteNode, slug) {
+    if (siteNode.slug === slug) {
+        return siteNode;
+    }
+    for (var i = 0; i < siteNode.children.length; i++) {
+        var result = findNode(siteNode.children[i], slug);
+        if (result) {
+            return result;
+        }
+    }
+    return undefined;
+}
 function processTemplate(templatePath, siteNode, root) {
     return new Promise(function (resolve) {
         var data = __assign(__assign({}, siteNode), { root: root });
-        ejs.renderFile(templatePath, data, {}, function (err, str) {
+        ejs.renderFile(templatePath, data, {
+            context: {
+                find: function (slug) { return findNode(root, slug); },
+            },
+        }, function (err, str) {
             if (err) {
                 logger_1.default.error(err);
                 throw new Error("Could not render template for \"" + siteNode.slug + "\"");
@@ -90,13 +107,16 @@ function processTemplate(templatePath, siteNode, root) {
     });
 }
 function compilePage(_a) {
-    var siteNode = _a.siteNode, rootNode = _a.rootNode, templateDir = _a.templateDir, outputDir = _a.outputDir, contentDir = _a.contentDir;
+    var siteNode = _a.siteNode, rootNode = _a.rootNode, templateMap = _a.templateMap, outputDir = _a.outputDir, contentDir = _a.contentDir;
     return __awaiter(this, void 0, void 0, function () {
         var templatePath, renderedHtml, subCompileJobs;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    templatePath = path_1.default.resolve(templateDir, siteNode.template + ".ejs");
+                    templatePath = templateMap[siteNode.template];
+                    if (typeof templatePath === 'undefined') {
+                        throw new Error("No .ejs file found for template \"" + siteNode.template + "\"");
+                    }
                     return [4 /*yield*/, processTemplate(templatePath, siteNode, rootNode)];
                 case 1:
                     renderedHtml = _b.sent();
@@ -104,7 +124,7 @@ function compilePage(_a) {
                         return compilePage({
                             siteNode: child,
                             rootNode: rootNode,
-                            templateDir: templateDir,
+                            templateMap: templateMap,
                             outputDir: outputDir,
                             contentDir: contentDir,
                         });
@@ -126,10 +146,12 @@ function compilePage(_a) {
 }
 function generateTemplates(_a) {
     var rootNode = _a.rootNode, templateDir = _a.templateDir, outputDir = _a.outputDir, contentDir = _a.contentDir;
+    var templateMap = findTemplates_1.default(templateDir);
+    logger_1.default.debug('Found templates:\n' + JSON.stringify(templateMap, null, 2));
     return compilePage({
         rootNode: rootNode,
         siteNode: rootNode,
-        templateDir: templateDir,
+        templateMap: templateMap,
         outputDir: outputDir,
         contentDir: contentDir,
     });
