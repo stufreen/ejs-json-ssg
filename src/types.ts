@@ -20,6 +20,7 @@ export type Fields = {
 };
 
 export interface SiteNode {
+  id: string;
   slug: string;
   template: string;
   visible?: boolean;
