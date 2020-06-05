@@ -53,7 +53,7 @@ var config_1 = require("./config");
 var parseSite_1 = __importDefault(require("./parseSite"));
 var validateSiteFile_1 = require("./validateSiteFile");
 var attachPaths_1 = __importDefault(require("./attachPaths"));
-var generateTemplates_1 = __importDefault(require("./generateTemplates"));
+var renderPages_1 = __importDefault(require("./renderPages"));
 var argv = yargs_1.default.options({
     c: { type: 'string', alias: 'config' },
     l: { type: 'string', alias: 'logs' },
@@ -68,7 +68,7 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
                     startTime = process.hrtime.bigint();
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 9, , 10]);
+                    _a.trys.push([1, 8, , 9]);
                     return [4 /*yield*/, config_1.getConfig(argv)];
                 case 2:
                     config = _a.sent();
@@ -77,7 +77,9 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
                 case 3:
                     rootNode = _a.sent();
                     logger_1.default.silly("Site: " + JSON.stringify(rootNode, null, 2));
-                    if (!validateSiteFile_1.isSiteNode(rootNode)) return [3 /*break*/, 8];
+                    if (!validateSiteFile_1.isSiteNode(rootNode)) {
+                        throw new Error('Invalid root node');
+                    }
                     logger_1.default.debug('site.json is valid');
                     rootWithPaths = attachPaths_1.default(rootNode);
                     logger_1.default.silly("Root with paths: " + JSON.stringify(rootWithPaths, null, 2));
@@ -85,7 +87,7 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
                     _a.label = 4;
                 case 4:
                     _a.trys.push([4, 6, , 7]);
-                    return [4 /*yield*/, generateTemplates_1.default({
+                    return [4 /*yield*/, renderPages_1.default({
                             rootNode: rootWithPaths,
                             templateDir: config.templateDir,
                             outputDir: config.outputDir,
@@ -101,15 +103,14 @@ logger_1.setLoggerLevel((_a = argv.l) !== null && _a !== void 0 ? _a : 'info');
                     endTime = process.hrtime.bigint();
                     logger_1.default.info("Done in " + Number(endTime - startTime) / 1000000 + " milliseconds.");
                     process.exit(0);
-                    _a.label = 8;
-                case 8: return [3 /*break*/, 10];
-                case 9:
+                    return [3 /*break*/, 9];
+                case 8:
                     err_2 = _a.sent();
                     logger_1.default.error(err_2.message);
                     logger_1.default.error('Exiting.');
                     process.exit(1);
-                    return [3 /*break*/, 10];
-                case 10: return [2 /*return*/];
+                    return [3 /*break*/, 9];
+                case 9: return [2 /*return*/];
             }
         });
     });

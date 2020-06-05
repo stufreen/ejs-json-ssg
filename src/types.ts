@@ -41,6 +41,6 @@ export interface SiteNodeWithPath extends SiteNode {
   children: SiteNodeWithPath[];
 }
 
-export type TemplateMap = {
+export type FileMap = {
   [key: string]: string;
 };

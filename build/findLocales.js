@@ -16,20 +16,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var fs_1 = require("fs");
-function findTemplates(dir, templateExtension) {
-    if (templateExtension === void 0) { templateExtension = '.ejs'; }
-    return fs_1.readdirSync(dir).reduce(function (accumulator, f) {
+function findLocales(contentDir) {
+    var stringsDir = path_1.default.join(contentDir, 'strings');
+    return fs_1.readdirSync(stringsDir).reduce(function (accumulator, f) {
         var _a;
-        var filePath = path_1.default.join(dir, f);
+        var filePath = path_1.default.join(stringsDir, f);
         var isDirectory = fs_1.statSync(filePath).isDirectory();
         if (isDirectory) {
-            return __assign(__assign({}, accumulator), findTemplates(filePath, templateExtension));
+            return __assign(__assign({}, accumulator), findLocales(filePath));
         }
-        if (path_1.default.extname(f).toLowerCase() === templateExtension) {
-            var fileName = path_1.default.basename(f, templateExtension);
-            return __assign(__assign({}, accumulator), (_a = {}, _a[fileName] = path_1.default.join(dir, f), _a));
+        if (path_1.default.extname(f).toLowerCase() === '.json') {
+            var fileName = path_1.default.basename(f, '.json');
+            return __assign(__assign({}, accumulator), (_a = {}, _a[fileName] = path_1.default.join(stringsDir, f), _a));
         }
         return accumulator;
     }, {});
 }
-exports.default = findTemplates;
+exports.default = findLocales;

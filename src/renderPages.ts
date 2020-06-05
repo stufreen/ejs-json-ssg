@@ -1,10 +1,11 @@
 import * as ejs from 'ejs';
 import { access, mkdir, constants, promises } from 'fs';
 
-import { SiteNodeWithPath, TemplateMap, SiteNode } from './types';
+import { SiteNodeWithPath, FileMap, SiteNode } from './types';
 import logger from './logger';
 import path from 'path';
 import findTemplates from './findTemplates';
+import findLocales from './findLocales';
 
 interface GenerateTemplates {
   rootNode: SiteNodeWithPath;
@@ -16,7 +17,7 @@ interface GenerateTemplates {
 interface CompilePage {
   siteNode: SiteNodeWithPath;
   rootNode: SiteNodeWithPath;
-  templateMap: TemplateMap;
+  templateMap: FileMap;
   outputDir: string;
   contentDir: string;
 }
@@ -110,19 +111,42 @@ async function compilePage({
   await Promise.all(subCompileJobs);
 }
 
-export default function generateTemplates({
+export default function renderPages({
   rootNode,
   templateDir,
   outputDir,
   contentDir,
 }: GenerateTemplates): Promise<void> {
-  const templateMap = findTemplates(templateDir);
+  const templateMap = findTemplates(templateDir, '.ejs');
   logger.debug('Found templates:\n' + JSON.stringify(templateMap, null, 2));
-  return compilePage({
-    rootNode,
-    siteNode: rootNode,
-    templateMap,
-    outputDir,
-    contentDir,
+
+  const localeMap = findLocales(contentDir);
+  logger.debug(`Found locales: ${JSON.stringify(localeMap, null, 2)}`);
+
+  const localeJobs = Object.keys(localeMap).map((localeKey) => {
+    logger.debug(`Rendering pages for locale ${localeKey}`);
+    return promises
+      .readFile(localeMap[localeKey], 'utf-8')
+      .then((localeFileContents) => JSON.parse(localeFileContents))
+      .then((translationTree) => {
+        logger.silly(
+          `${localeMap[localeKey]}:\n${JSON.stringify(
+            translationTree,
+            null,
+            2
+          )}`
+        );
+      });
   });
+
+  return Promise.all(localeJobs).then(() => {
+    return;
+  });
+  // return compilePage({
+  //   rootNode,
+  //   siteNode: rootNode,
+  //   templateMap,
+  //   outputDir,
+  //   contentDir,
+  // });
 }

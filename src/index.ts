@@ -5,7 +5,8 @@ import { getConfig } from './config';
 import parseSite from './parseSite';
 import { isSiteNode } from './validateSiteFile';
 import attachPaths from './attachPaths';
-import generateTemplates from './generateTemplates';
+import renderPages from './renderPages';
+import findLocales from './findLocales';
 
 const argv = yargs.options({
   c: { type: 'string', alias: 'config' },
@@ -24,31 +25,31 @@ setLoggerLevel(argv.l ?? 'info');
     const rootNode = await parseSite(config.contentDir);
     logger.silly(`Site: ${JSON.stringify(rootNode, null, 2)}`);
 
-    if (isSiteNode(rootNode)) {
-      logger.debug('site.json is valid');
-      const rootWithPaths = attachPaths(rootNode);
-      logger.silly(
-        `Root with paths: ${JSON.stringify(rootWithPaths, null, 2)}`
-      );
-
-      logger.info('Rendering site...');
-      try {
-        await generateTemplates({
-          rootNode: rootWithPaths,
-          templateDir: config.templateDir,
-          outputDir: config.outputDir,
-          contentDir: config.contentDir,
-        });
-      } catch (err) {
-        throw new Error(err);
-      }
-
-      const endTime = process.hrtime.bigint();
-      logger.info(
-        `Done in ${Number(endTime - startTime) / 1000000} milliseconds.`
-      );
-      process.exit(0);
+    if (!isSiteNode(rootNode)) {
+      throw new Error('Invalid root node');
     }
+
+    logger.debug('site.json is valid');
+    const rootWithPaths = attachPaths(rootNode);
+    logger.silly(`Root with paths: ${JSON.stringify(rootWithPaths, null, 2)}`);
+
+    logger.info('Rendering site...');
+    try {
+      await renderPages({
+        rootNode: rootWithPaths,
+        templateDir: config.templateDir,
+        outputDir: config.outputDir,
+        contentDir: config.contentDir,
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+
+    const endTime = process.hrtime.bigint();
+    logger.info(
+      `Done in ${Number(endTime - startTime) / 1000000} milliseconds.`
+    );
+    process.exit(0);
   } catch (err) {
     logger.error(err.message);
     logger.error('Exiting.');
